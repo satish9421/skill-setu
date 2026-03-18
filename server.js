@@ -56,7 +56,10 @@ app.use(session({
 // Email transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
+    socketTimeout: 5000
 });
 
 async function sendEmail(to, subject, html) {
@@ -150,7 +153,7 @@ async function initializeDemoData() {
 
 app.post('/api/auth/send-otp', async (req, res) => {
     try {
-        const { email, purpose } = req.body; // purpose: 'register' | 'reset'
+        const { email, purpose } = req.body;
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         await otpCol.deleteMany({ email });
@@ -164,9 +167,14 @@ app.post('/api/auth/send-otp', async (req, res) => {
                 <p style="color:#888;font-size:13px;">This OTP expires in 10 minutes. Do not share it with anyone.</p>
             </div>`;
 
-        await sendEmail(email, 'Skill Setu - Your OTP Code', html);
+        // Respond immediately — don't await email so UI never hangs
         console.log(`[OTP] ${email} → ${otp}`);
         res.json({ success: true, message: 'OTP sent' });
+
+        // Send email in background after responding
+        sendEmail(email, 'Skill Setu - Your OTP Code', html).catch(e =>
+            console.error('Email send error:', e.message)
+        );
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
