@@ -1,6 +1,4 @@
-const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? `http://localhost:${window.location.port || 3000}/api`
-    : `${window.location.origin}/api`;
+// API is defined in config.js (loaded before this script)
 let currentWorker = JSON.parse(sessionStorage.getItem('currentUser'));
 let locationInterval = null;
 

@@ -25,16 +25,20 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } });
 
 // Middleware
+const ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:5500',
+    'http://127.0.0.1:3000',
+    process.env.FRONTEND_URL, // set this to your Netlify URL in Render env vars
+].filter(Boolean);
+
 app.use(cors({
     origin: function(origin, callback) {
-        // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
-        // Allow localhost in dev, and same-origin in production
-        if (origin.includes('localhost') || origin.includes('127.0.0.1') || process.env.ALLOWED_ORIGIN === origin) {
+        if (!origin) return callback(null, true); // allow server-to-server / curl
+        if (ALLOWED_ORIGINS.some(o => origin.startsWith(o)) || origin.includes('netlify.app') || origin.includes('localhost')) {
             return callback(null, true);
         }
-        // In production on Render, the frontend is served from the same origin
-        return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
     },
     credentials: true
 }));

@@ -18,5 +18,5 @@ services:
         sync: false
       - key: EMAIL_PASS
         sync: false
-      - key: EMAIL_FROM
+      - key: FRONTEND_URL
         sync: false
