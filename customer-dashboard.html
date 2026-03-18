@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard – Skill Setu</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="dash-body">
+
+<!-- NAVBAR -->
+<nav class="dash-navbar">
+    <a href="index.html" class="dash-logo">⚡ Skill <span class="accent">Setu</span></a>
+    <div class="dash-nav-right">
+        <div style="position:relative">
+            <button class="notif-btn" onclick="toggleNotifPanel()" id="notifBtn">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge" id="notifCount" style="display:none">0</span>
+            </button>
+            <div class="notif-panel" id="notifPanel" style="display:none"></div>
+        </div>
+        <div class="user-menu" onclick="showSection('profile')">
+            <div class="user-avatar" id="navAvatar">?</div>
+            <span class="user-name" id="navName">Loading...</span>
+            <i class="fas fa-chevron-down" style="font-size:.7rem;color:var(--text-light)"></i>
+        </div>
+        <button class="btn-sm btn-sm-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</nav>
+
+<div class="dash-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <button class="sidebar-item active" onclick="showSection('home')" id="nav-home">
+                <i class="fas fa-home"></i> Dashboard
+            </button>
+            <button class="sidebar-item" onclick="showSection('find')" id="nav-find">
+                <i class="fas fa-search"></i> Find Workers
+            </button>
+            <button class="sidebar-item" onclick="showSection('bookings')" id="nav-bookings">
+                <i class="fas fa-calendar-check"></i> My Bookings
+                <span class="sidebar-badge" id="pendingCount" style="display:none">0</span>
+            </button>
+            <button class="sidebar-item" onclick="showSection('wallet')" id="nav-wallet">
+                <i class="fas fa-wallet"></i> Wallet
+            </button>
+            <button class="sidebar-item" onclick="showSection('notifications')" id="nav-notifications">
+                <i class="fas fa-bell"></i> Notifications
+            </button>
+            <button class="sidebar-item" onclick="showSection('profile')" id="nav-profile">
+                <i class="fas fa-user"></i> Profile
+            </button>
+        </nav>
+    </aside>
+
+    <main class="dash-main">
+
+        <!-- HOME -->
+        <section class="dash-section active" id="sec-home">
+            <h2 class="section-title"><i class="fas fa-home"></i> Dashboard</h2>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#e8f0fe"><i class="fas fa-calendar-check" style="color:#6c63ff"></i></div>
+                    <div class="stat-card-info"><span id="totalBookings">0</span><small>Total Bookings</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#e8f5e9"><i class="fas fa-check-circle" style="color:#27ae60"></i></div>
+                    <div class="stat-card-info"><span id="completedCount">0</span><small>Completed</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#fff8e1"><i class="fas fa-wallet" style="color:#f39c12"></i></div>
+                    <div class="stat-card-info"><span id="walletStat">₹0</span><small>Wallet Balance</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#fce4ec"><i class="fas fa-star" style="color:#e91e63"></i></div>
+                    <div class="stat-card-info"><span id="reviewsGiven">0</span><small>Reviews Given</small></div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+                <div class="card">
+                    <div class="card-header"><h3>Recent Bookings</h3><button class="btn-sm btn-sm-outline" onclick="showSection('bookings')">View All</button></div>
+                    <div id="recentBookings"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Quick Actions</h3></div>
+                    <div style="display:flex;flex-direction:column;gap:.75rem">
+                        <button class="btn-book" onclick="showSection('find')"><i class="fas fa-search"></i> Find a Worker</button>
+                        <button class="btn-view" onclick="showSection('wallet')"><i class="fas fa-plus"></i> Add Money to Wallet</button>
+                        <button class="btn-view" onclick="showSection('bookings')"><i class="fas fa-list"></i> View All Bookings</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FIND WORKERS -->
+        <section class="dash-section" id="sec-find">
+            <h2 class="section-title"><i class="fas fa-search"></i> Find Workers</h2>
+            <div class="search-bar">
+                <select id="filterService">
+                    <option value="">All Services</option>
+                    <option value="plumber">Plumber</option>
+                    <option value="carpenter">Carpenter</option>
+                    <option value="electrician">Electrician</option>
+                    <option value="cook">Cook</option>
+                    <option value="maid">Maid</option>
+                    <option value="gardener">Gardener</option>
+                    <option value="painter">Painter</option>
+                    <option value="ac-technician">AC Technician</option>
+                    <option value="mechanic">Mechanic</option>
+                    <option value="cleaner">Cleaner</option>
+                    <option value="locksmith">Locksmith</option>
+                    <option value="mobile-repair">Mobile Repair</option>
+                </select>
+                <select id="filterSort">
+                    <option value="rating">Best Rated</option>
+                    <option value="price_low">Price: Low to High</option>
+                    <option value="price_high">Price: High to Low</option>
+                    <option value="experience">Most Experienced</option>
+                </select>
+                <input type="number" id="filterMaxRate" placeholder="Max rate (₹/hr)" min="0">
+                <button class="btn-search" onclick="searchWorkers()"><i class="fas fa-search"></i> Search</button>
+            </div>
+            <div class="workers-grid" id="workersList">
+                <div class="empty-state" style="grid-column:1/-1">
+                    <i class="fas fa-search"></i>
+                    <h3>Search for workers</h3>
+                    <p>Select a service and click Search to find available workers near you</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOOKINGS -->
+        <section class="dash-section" id="sec-bookings">
+            <h2 class="section-title"><i class="fas fa-calendar-check"></i> My Bookings</h2>
+            <div style="display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
+                <button class="btn-sm btn-sm-primary" onclick="filterBookings('all', event)">All</button>
+                <button class="btn-sm btn-sm-outline" onclick="filterBookings('pending', event)">Pending</button>
+                <button class="btn-sm btn-sm-outline" onclick="filterBookings('accepted', event)">Accepted</button>
+                <button class="btn-sm btn-sm-outline" onclick="filterBookings('in-progress', event)">In Progress</button>
+                <button class="btn-sm btn-sm-outline" onclick="filterBookings('completed', event)">Completed</button>
+            </div>
+            <div id="bookingsList"></div>
+        </section>
+
+        <!-- WALLET -->
+        <section class="dash-section" id="sec-wallet">
+            <h2 class="section-title"><i class="fas fa-wallet"></i> My Wallet</h2>
+            <div class="wallet-hero">
+                <div class="wallet-balance-label">Available Balance</div>
+                <div class="wallet-balance-amount">₹<span id="walletAmount">0.00</span></div>
+                <div class="wallet-actions-row">
+                    <button class="wallet-action-btn" onclick="openAddMoney()"><i class="fas fa-plus"></i> Add Money</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>Transaction History</h3></div>
+                <div id="transactionList"></div>
+            </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="dash-section" id="sec-notifications">
+            <h2 class="section-title"><i class="fas fa-bell"></i> Notifications</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Notifications</h3>
+                    <button class="btn-sm btn-sm-outline" onclick="markAllRead()">Mark all read</button>
+                </div>
+                <div id="notifList"></div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="dash-section" id="sec-profile">
+            <h2 class="section-title"><i class="fas fa-user"></i> My Profile</h2>
+            <div class="card">
+                <div class="profile-header">
+                    <div class="profile-avatar-wrap">
+                        <div class="profile-avatar" id="profileAvatar">?</div>
+                        <label class="avatar-edit-btn" for="avatarInput"><i class="fas fa-camera"></i></label>
+                        <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+                    </div>
+                    <div>
+                        <div class="profile-name" id="profileNameDisplay">Loading...</div>
+                        <div class="profile-email" id="profileEmailDisplay"></div>
+                        <div style="margin-top:.5rem"><span class="status-pill completed">Verified Customer</span></div>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group-dash">
+                        <label>Full Name</label>
+                        <input type="text" id="pName" placeholder="Your full name">
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Phone Number</label>
+                        <input type="tel" id="pPhone" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group-dash" style="grid-column:1/-1">
+                        <label>Address</label>
+                        <textarea id="pAddress" placeholder="Your full address"></textarea>
+                    </div>
+                </div>
+                <div style="margin-top:1.5rem">
+                    <button class="btn-save" onclick="updateProfile()"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+            <div class="card" style="margin-top:1.5rem">
+                <div class="card-header"><h3>Change Password</h3></div>
+                <div class="form-grid">
+                    <div class="form-group-dash">
+                        <label>New Password</label>
+                        <input type="password" id="newPw" placeholder="New password">
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPw" placeholder="Confirm password">
+                    </div>
+                </div>
+                <div style="margin-top:1rem">
+                    <button class="btn-save" onclick="changePassword()">Update Password</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- ADD MONEY MODAL -->
+<div class="generic-modal" id="addMoneyModal">
+    <div class="gm-content">
+        <button class="gm-close" onclick="closeModal('addMoneyModal')"><i class="fas fa-times"></i></button>
+        <div class="gm-title">Add Money to Wallet</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem">
+            <button class="btn-sm btn-sm-outline" onclick="setAmount(100)">₹100</button>
+            <button class="btn-sm btn-sm-outline" onclick="setAmount(200)">₹200</button>
+            <button class="btn-sm btn-sm-outline" onclick="setAmount(500)">₹500</button>
+            <button class="btn-sm btn-sm-outline" onclick="setAmount(1000)">₹1000</button>
+        </div>
+        <div class="form-group-dash" style="margin-bottom:1.5rem">
+            <label>Custom Amount (₹)</label>
+            <input type="number" id="addMoneyAmount" placeholder="Enter amount" min="1">
+        </div>
+        <button class="btn-save" style="width:100%" onclick="addMoney()">Add Money</button>
+    </div>
+</div>
+
+<!-- BOOK WORKER MODAL -->
+<div class="generic-modal" id="bookModal">
+    <div class="gm-content">
+        <button class="gm-close" onclick="closeModal('bookModal')"><i class="fas fa-times"></i></button>
+        <div class="gm-title">Confirm Booking</div>
+        <div id="bookModalContent"></div>
+        <div style="display:flex;gap:1rem;margin-top:1.5rem">
+            <button class="btn-save" style="flex:1" onclick="confirmBooking()">Confirm Booking</button>
+            <button class="btn-sm btn-sm-outline" style="flex:1" onclick="closeModal('bookModal')">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- RATE MODAL -->
+<div class="generic-modal" id="rateModal">
+    <div class="gm-content">
+        <button class="gm-close" onclick="closeModal('rateModal')"><i class="fas fa-times"></i></button>
+        <div class="gm-title">Rate & Review</div>
+        <p style="color:var(--text-light);margin-bottom:1.5rem">How was your experience?</p>
+        <div class="star-rating" id="starRating">
+            <span class="star" onclick="setRating(1)">★</span>
+            <span class="star" onclick="setRating(2)">★</span>
+            <span class="star" onclick="setRating(3)">★</span>
+            <span class="star" onclick="setRating(4)">★</span>
+            <span class="star" onclick="setRating(5)">★</span>
+        </div>
+        <div class="form-group-dash" style="margin-top:1.2rem">
+            <label>Write a Review (optional)</label>
+            <textarea id="reviewText" placeholder="Share your experience..."></textarea>
+        </div>
+        <button class="btn-save" style="width:100%;margin-top:1rem" onclick="submitRating()">Submit Review</button>
+    </div>
+</div>
+
+<!-- WORKER DETAIL MODAL -->
+<div class="generic-modal" id="workerDetailModal">
+    <div class="gm-content" style="max-width:560px">
+        <button class="gm-close" onclick="closeModal('workerDetailModal')"><i class="fas fa-times"></i></button>
+        <div id="workerDetailContent"></div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="customer.js"></script>
+</body>
+</html>
