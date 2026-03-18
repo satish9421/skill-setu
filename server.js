@@ -29,13 +29,14 @@ const ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:5500',
     'http://127.0.0.1:3000',
-    process.env.FRONTEND_URL, // set this to your Netlify URL in Render env vars
+    'https://resilient-lebkuchen-50d210.netlify.app',
+    process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
     origin: function(origin, callback) {
-        if (!origin) return callback(null, true); // allow server-to-server / curl
-        if (ALLOWED_ORIGINS.some(o => origin.startsWith(o)) || origin.includes('netlify.app') || origin.includes('localhost')) {
+        if (!origin) return callback(null, true);
+        if (ALLOWED_ORIGINS.includes(origin) || origin.includes('localhost')) {
             return callback(null, true);
         }
         return callback(new Error('Not allowed by CORS'));
