@@ -4,7 +4,6 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
-const { Resend } = require('resend');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -55,7 +54,11 @@ app.use(session({
 }));
 
 // Email via Resend (primary) with nodemailer Gmail fallback
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+    const { Resend } = require('resend');
+    resend = new Resend(process.env.RESEND_API_KEY);
+}
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
