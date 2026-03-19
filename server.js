@@ -4,7 +4,6 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
-const twilio = require('twilio');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -77,26 +76,9 @@ async function sendEmail(to, subject, html) {
     }
 }
 
-// SMS via Twilio
+// SMS via Twilio - disabled
 async function sendSMS(to, message) {
-    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
-        console.log(`[SMS MOCK] To: ${to} | Message: ${message}`);
-        return true;
-    }
-    try {
-        const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-        // Ensure number is in E.164 format e.g. +919876543210
-        const formattedNumber = to.startsWith('+') ? to : `+91${to.replace(/\D/g,'')}`;
-        await client.messages.create({
-            body: message,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: formattedNumber
-        });
-        return true;
-    } catch (e) {
-        console.error('SMS error:', e.message);
-        return false;
-    }
+    console.log(`[SMS MOCK] To: ${to} | ${message}`);
 }
 
 // Connect to MongoDB
@@ -176,30 +158,26 @@ async function initializeDemoData() {
 
 app.post('/api/auth/send-otp', async (req, res) => {
     try {
-        const { email, phone, purpose } = req.body;
+        const { email, purpose } = req.body;
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         await otpCol.deleteMany({ email });
         await otpCol.insertOne({ email, otp, purpose, createdAt: new Date() });
 
+        const html = `
+            <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:30px;background:#f9f9f9;border-radius:10px;">
+                <h2 style="color:#6c63ff;text-align:center;">Skill Setu</h2>
+                <p>Your OTP for <strong>${purpose === 'register' ? 'email verification' : 'password reset'}</strong> is:</p>
+                <div style="font-size:36px;font-weight:bold;text-align:center;letter-spacing:10px;color:#6c63ff;padding:20px;background:#fff;border-radius:8px;margin:20px 0;">${otp}</div>
+                <p style="color:#888;font-size:13px;">This OTP expires in 10 minutes. Do not share it with anyone.</p>
+            </div>`;
+
         console.log(`[OTP] ${email} → ${otp}`);
-        // Respond immediately so UI never hangs
         res.json({ success: true, message: 'OTP sent' });
 
-        // Send SMS if phone provided, else fallback to email
-        if (phone) {
-            const smsText = `Your Skill Setu OTP is: ${otp}. Valid for 10 minutes. Do not share.`;
-            sendSMS(phone, smsText).catch(e => console.error('SMS error:', e.message));
-        } else {
-            const html = `
-                <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:30px;background:#f9f9f9;border-radius:10px;">
-                    <h2 style="color:#6c63ff;text-align:center;">Skill Setu</h2>
-                    <p>Your OTP for <strong>${purpose === 'register' ? 'email verification' : 'password reset'}</strong> is:</p>
-                    <div style="font-size:36px;font-weight:bold;text-align:center;letter-spacing:10px;color:#6c63ff;padding:20px;background:#fff;border-radius:8px;margin:20px 0;">${otp}</div>
-                    <p style="color:#888;font-size:13px;">This OTP expires in 10 minutes. Do not share it with anyone.</p>
-                </div>`;
-            sendEmail(email, 'Skill Setu - Your OTP Code', html).catch(e => console.error('Email error:', e.message));
-        }
+        sendEmail(email, 'Skill Setu - Your OTP Code', html).catch(e =>
+            console.error('Email send error:', e.message)
+        );
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
