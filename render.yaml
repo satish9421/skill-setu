@@ -19,4 +19,4 @@ services:
       - key: EMAIL_PASS
         sync: false
       - key: FRONTEND_URL
-        value: https://resilient-lebkuchen-50d210.netlify.app
+        value: https://skill-setu.netlify.app

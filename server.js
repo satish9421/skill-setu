@@ -29,7 +29,7 @@ const ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:5500',
     'http://127.0.0.1:3000',
-    'https://resilient-lebkuchen-50d210.netlify.app',
+    'https://skill-setu.netlify.app',
     process.env.FRONTEND_URL,
 ].filter(Boolean);
 
