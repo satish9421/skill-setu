@@ -88,7 +88,9 @@ document.getElementById('authModal').addEventListener('click', function(e) {
 // ── OTP ───────────────────────────────────────────────────────────────────────
 async function sendOtp() {
     const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
     if (!email || !email.includes('@')) { showToast('Enter a valid email first', 'error'); return; }
+    if (!phone) { showToast('Enter your phone number to receive OTP', 'error'); return; }
 
     const btn = document.getElementById('sendOtpBtn');
     btn.disabled = true;
@@ -96,13 +98,13 @@ async function sendOtp() {
 
     const res = await fetch(`${API}/auth/send-otp`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, purpose: 'register' })
+        body: JSON.stringify({ email, phone, purpose: 'register' })
     });
     const data = await res.json();
 
     if (res.ok) {
         document.getElementById('otpGroup').style.display = 'block';
-        showToast('OTP sent to your email! (Check console if email not configured)', 'success');
+        showToast('OTP sent to your mobile number!', 'success');
         startOtpTimer(btn);
     } else {
         showToast(data.error || 'Failed to send OTP', 'error');
