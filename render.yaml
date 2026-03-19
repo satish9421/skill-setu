@@ -21,8 +21,8 @@ services:
       - key: FRONTEND_URL
         value: https://skill-setu.netlify.app
       - key: TWILIO_ACCOUNT_SID
-        sync: false
+        value: AC340005e8778637f3871b65063cee4022
       - key: TWILIO_AUTH_TOKEN
-        sync: false
+        value: d39bbc9a20fd82db1b854f89a224690b
       - key: TWILIO_PHONE_NUMBER
-        sync: false
+        value: +18148940613
