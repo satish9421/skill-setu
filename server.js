@@ -4,6 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -53,7 +54,9 @@ app.use(session({
     cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
-// Email transporter
+// Email via Resend (primary) with nodemailer Gmail fallback
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
@@ -63,22 +66,31 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendEmail(to, subject, html) {
-    if (!process.env.EMAIL_USER || process.env.EMAIL_USER === 'your-email@gmail.com') {
-        console.log(`[EMAIL MOCK] To: ${to} | Subject: ${subject}`);
-        return true;
+    // Try Resend first
+    if (process.env.RESEND_API_KEY) {
+        try {
+            await resend.emails.send({
+                from: process.env.RESEND_FROM || 'Skill Setu <onboarding@resend.dev>',
+                to,
+                subject,
+                html
+            });
+            return true;
+        } catch (e) {
+            console.error('Resend error:', e.message);
+        }
     }
-    try {
-        await transporter.sendMail({ from: process.env.EMAIL_FROM, to, subject, html });
-        return true;
-    } catch (e) {
-        console.error('Email error:', e.message);
-        return false;
+    // Fallback to Gmail
+    if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your-email@gmail.com') {
+        try {
+            await transporter.sendMail({ from: process.env.EMAIL_FROM, to, subject, html });
+            return true;
+        } catch (e) {
+            console.error('Gmail error:', e.message);
+        }
     }
-}
-
-// SMS via Twilio - disabled
-async function sendSMS(to, message) {
-    console.log(`[SMS MOCK] To: ${to} | ${message}`);
+    console.log(`[EMAIL MOCK] To: ${to} | Subject: ${subject}`);
+    return true;
 }
 
 // Connect to MongoDB
