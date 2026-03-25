@@ -73,8 +73,18 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendEmail(to, subject, html) {
-    // Try Resend first
-    if (process.env.RESEND_API_KEY) {
+    // Try Gmail first — sends to any email address
+    if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your-email@gmail.com' && process.env.EMAIL_PASS) {
+        try {
+            await transporter.sendMail({ from: process.env.EMAIL_FROM || `Skill Setu <${process.env.EMAIL_USER}>`, to, subject, html });
+            console.log(`[EMAIL] Sent via Gmail to ${to}`);
+            return true;
+        } catch (e) {
+            console.error('Gmail error:', e.message);
+        }
+    }
+    // Fallback to Resend (only works for verified domain or account owner email)
+    if (resend) {
         try {
             await resend.emails.send({
                 from: process.env.RESEND_FROM || 'Skill Setu <onboarding@resend.dev>',
@@ -82,18 +92,10 @@ async function sendEmail(to, subject, html) {
                 subject,
                 html
             });
+            console.log(`[EMAIL] Sent via Resend to ${to}`);
             return true;
         } catch (e) {
             console.error('Resend error:', e.message);
-        }
-    }
-    // Fallback to Gmail
-    if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your-email@gmail.com') {
-        try {
-            await transporter.sendMail({ from: process.env.EMAIL_FROM, to, subject, html });
-            return true;
-        } catch (e) {
-            console.error('Gmail error:', e.message);
         }
     }
     console.log(`[EMAIL MOCK] To: ${to} | Subject: ${subject}`);
