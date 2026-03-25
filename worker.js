@@ -1,4 +1,5 @@
 // API is defined in config.js (loaded before this script)
+/* global API */
 let currentWorker = JSON.parse(sessionStorage.getItem('currentUser'));
 let locationInterval = null;
 

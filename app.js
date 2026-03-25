@@ -1,4 +1,5 @@
 // API is defined in config.js (loaded before this script)
+/* global API */
 let currentUserType = 'customer';
 let otpVerified = false;
 let forgotOtpVerified = false;
