@@ -94,18 +94,29 @@ async function sendOtp() {
     btn.disabled = true;
     btn.textContent = 'Sending...';
 
-    const res = await fetch(`${API}/auth/send-otp`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, purpose: 'register' })
-    });
-    const data = await res.json();
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
 
-    if (res.ok) {
-        document.getElementById('otpGroup').style.display = 'block';
-        showToast('OTP sent to your email!', 'success');
-        startOtpTimer(btn);
-    } else {
-        showToast(data.error || 'Failed to send OTP', 'error');
+        const res = await fetch(`${API}/auth/send-otp`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, purpose: 'register' }),
+            signal: controller.signal
+        });
+        clearTimeout(timeout);
+        const data = await res.json();
+
+        if (res.ok) {
+            document.getElementById('otpGroup').style.display = 'block';
+            showToast('OTP sent to your email!', 'success');
+            startOtpTimer(btn);
+        } else {
+            showToast(data.error || 'Failed to send OTP', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Send OTP';
+        }
+    } catch (e) {
+        showToast(e.name === 'AbortError' ? 'Request timed out. Try again.' : 'Failed to send OTP. Check connection.', 'error');
         btn.disabled = false;
         btn.textContent = 'Send OTP';
     }
@@ -206,26 +217,37 @@ async function handleLogin(e) {
     btn.textContent = 'Logging in...';
     btn.disabled = true;
 
-    const res = await fetch(`${API}/auth/login`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-            email: document.getElementById('loginEmail').value.trim(),
-            password: document.getElementById('loginPassword').value,
-            userType: currentUserType
-        })
-    });
-    const data = await res.json();
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
 
-    if (res.ok) {
-        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-        sessionStorage.setItem('userType', currentUserType);
-        showToast('Login successful!', 'success');
-        setTimeout(() => {
-            window.location.href = currentUserType === 'customer' ? 'customer-dashboard.html' : 'worker-dashboard.html';
-        }, 800);
-    } else {
-        showToast(data.error || 'Login failed', 'error');
+        const res = await fetch(`${API}/auth/login`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                email: document.getElementById('loginEmail').value.trim(),
+                password: document.getElementById('loginPassword').value,
+                userType: currentUserType
+            }),
+            signal: controller.signal
+        });
+        clearTimeout(timeout);
+        const data = await res.json();
+
+        if (res.ok) {
+            sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+            sessionStorage.setItem('userType', currentUserType);
+            showToast('Login successful!', 'success');
+            setTimeout(() => {
+                window.location.href = currentUserType === 'customer' ? 'customer-dashboard.html' : 'worker-dashboard.html';
+            }, 800);
+        } else {
+            showToast(data.error || 'Login failed', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Login';
+        }
+    } catch (e) {
+        showToast(e.name === 'AbortError' ? 'Request timed out. Try again.' : 'Login failed. Check connection.', 'error');
         btn.disabled = false;
         btn.textContent = 'Login';
     }
