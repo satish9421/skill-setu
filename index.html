@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Setu – Find Skilled Workers Near You</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="#" class="nav-logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#6c63ff"/>
+                <path d="M10 22L16 8L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12.5 17H19.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="24" cy="10" r="3" fill="#ff6584"/>
+            </svg>
+            <span>Skill <span class="accent">Setu</span></span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn-outline" onclick="openAuth('customer','login')">Customer Login</button>
+            <button class="btn-primary" onclick="openAuth('worker','login')">Worker Login</button>
+        </div>
+        <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-shield-alt"></i> Trusted by 10,000+ customers</div>
+        <h1>Find <span class="gradient-text">Skilled Workers</span><br>Near You, Instantly</h1>
+        <p>Connect with verified professionals for plumbing, electrical, carpentry, cooking and more. Fast, reliable, and affordable.</p>
+        <div class="hero-actions">
+            <button class="btn-hero-primary" onclick="openAuth('customer','register')">
+                <i class="fas fa-search"></i> Find a Worker
+            </button>
+            <button class="btn-hero-secondary" onclick="openAuth('worker','register')">
+                <i class="fas fa-briefcase"></i> Join as Worker
+            </button>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><span id="statWorkers">500+</span><small>Workers</small></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span id="statCustomers">10K+</span><small>Customers</small></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span id="statJobs">25K+</span><small>Jobs Done</small></div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-card floating">
+            <div class="hc-avatar">RK</div>
+            <div class="hc-info">
+                <strong>Rajesh Kumar</strong>
+                <span>Plumber · ⭐ 4.9</span>
+            </div>
+            <span class="hc-badge online">Online</span>
+        </div>
+        <div class="hero-card floating delay-1">
+            <div class="hc-avatar green">AS</div>
+            <div class="hc-info">
+                <strong>Amit Singh</strong>
+                <span>Carpenter · ⭐ 4.8</span>
+            </div>
+            <span class="hc-badge online">Online</span>
+        </div>
+        <div class="hero-card floating delay-2">
+            <i class="fas fa-check-circle" style="color:#6c63ff;font-size:1.2rem"></i>
+            <span style="margin-left:8px;font-weight:600">Job Completed!</span>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-section" id="services">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Our Services</span>
+            <h2>Everything You Need,<br>All in One Place</h2>
+            <p>From home repairs to personal services — we've got you covered</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#fff0f0"><i class="fas fa-wrench" style="color:#e74c3c"></i></div>
+                <h3>Plumber</h3><p>Pipe repairs, leaks & installations</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#fff8e1"><i class="fas fa-hammer" style="color:#f39c12"></i></div>
+                <h3>Carpenter</h3><p>Furniture, woodwork & repairs</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#fffde7"><i class="fas fa-bolt" style="color:#f1c40f"></i></div>
+                <h3>Electrician</h3><p>Wiring, fittings & installations</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#f0fff4"><i class="fas fa-utensils" style="color:#27ae60"></i></div>
+                <h3>Cook</h3><p>Home cooking & catering</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#f0f4ff"><i class="fas fa-broom" style="color:#3498db"></i></div>
+                <h3>Maid</h3><p>Cleaning & household chores</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#f5fff0"><i class="fas fa-leaf" style="color:#2ecc71"></i></div>
+                <h3>Gardener</h3><p>Lawn care & landscaping</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#fdf0ff"><i class="fas fa-paint-roller" style="color:#9b59b6"></i></div>
+                <h3>Painter</h3><p>Interior & exterior painting</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#e8f4fd"><i class="fas fa-snowflake" style="color:#2980b9"></i></div>
+                <h3>AC Technician</h3><p>AC service & repair</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#fff5f0"><i class="fas fa-car" style="color:#e67e22"></i></div>
+                <h3>Mechanic</h3><p>Vehicle repair & maintenance</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#f0faff"><i class="fas fa-soap" style="color:#1abc9c"></i></div>
+                <h3>Cleaner</h3><p>Deep cleaning services</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#fff0f5"><i class="fas fa-key" style="color:#e91e63"></i></div>
+                <h3>Locksmith</h3><p>Lock repair & key making</p>
+            </div>
+            <div class="service-card" onclick="openAuth('customer','login')">
+                <div class="sc-icon" style="background:#f3f0ff"><i class="fas fa-mobile-alt" style="color:#6c63ff"></i></div>
+                <h3>Mobile Repair</h3><p>Phone & tablet repairs</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how-it-works">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Simple Process</span>
+            <h2>How Skill Setu Works</h2>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">01</div>
+                <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+                <h3>Create Account</h3>
+                <p>Sign up as a customer or worker in under 2 minutes with email verification.</p>
+            </div>
+            <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="step-card">
+                <div class="step-num">02</div>
+                <div class="step-icon"><i class="fas fa-search-location"></i></div>
+                <h3>Find Workers</h3>
+                <p>Search by service type. See ratings, experience, and distance from you.</p>
+            </div>
+            <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="step-card">
+                <div class="step-num">03</div>
+                <div class="step-icon"><i class="fas fa-calendar-check"></i></div>
+                <h3>Book & Track</h3>
+                <p>Book instantly and track the worker's live location until they arrive.</p>
+            </div>
+            <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="step-card">
+                <div class="step-num">04</div>
+                <div class="step-icon"><i class="fas fa-star"></i></div>
+                <h3>Pay & Review</h3>
+                <p>Pay securely through your wallet and leave a review for the worker.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="features-section">
+    <div class="section-container">
+        <div class="features-grid">
+            <div class="features-text">
+                <span class="section-tag">Why Skill Setu</span>
+                <h2>Built for Trust,<br>Designed for Speed</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="fi-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div><h4>Live Location Tracking</h4><p>Track your worker in real-time once the job is accepted.</p></div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="fi-icon"><i class="fas fa-wallet"></i></div>
+                        <div><h4>Secure Wallet</h4><p>Add money, pay workers, and withdraw earnings — all secured.</p></div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="fi-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div><h4>Verified Workers</h4><p>All workers are verified with ratings and reviews from real customers.</p></div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="fi-icon"><i class="fas fa-bell"></i></div>
+                        <div><h4>Real-time Notifications</h4><p>Get instant updates on booking status, payments, and more.</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="features-visual">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="pm-header">
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="vertical-align:middle;margin-right:4px">
+                                    <rect width="32" height="32" rx="8" fill="#6c63ff"/>
+                                    <path d="M10 22L16 8L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12.5 17H19.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="24" cy="10" r="3" fill="#ff6584"/>
+                                </svg>
+                                Skill Setu
+                            </span>
+                            <span class="pm-notif"><i class="fas fa-bell"></i></span>
+                        </div>
+                        <div class="pm-card">
+                            <div class="pm-worker">
+                                <div class="pm-avatar">RK</div>
+                                <div>
+                                    <strong>Rajesh Kumar</strong>
+                                    <span>Plumber · 2.3 km away</span>
+                                </div>
+                            </div>
+                            <div class="pm-rating">⭐ 4.9 · 87 reviews</div>
+                            <div class="pm-track">
+                                <i class="fas fa-map-marker-alt" style="color:#6c63ff"></i>
+                                <span>Worker is 5 mins away</span>
+                            </div>
+                            <button class="pm-btn">Track Live</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="section-container">
+        <div class="footer-grid">
+            <div>
+                <div class="nav-logo" style="margin-bottom:1rem">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:.4rem">
+                        <rect width="32" height="32" rx="8" fill="#6c63ff"/>
+                        <path d="M10 22L16 8L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.5 17H19.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                        <circle cx="24" cy="10" r="3" fill="#ff6584"/>
+                    </svg>
+                    Skill <span class="accent">Setu</span>
+                </div>
+                <p style="color:#aaa;font-size:.9rem;max-width:250px">Connecting skilled workers with customers across India.</p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#" onclick="openAuth('customer','register')">Register as Customer</a></li>
+                    <li><a href="#" onclick="openAuth('worker','register')">Register as Worker</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> support@skillsetu.com</li>
+                    <li><i class="fas fa-phone"></i> +91 98765 43210</li>
+                    <li><i class="fas fa-map-marker-alt"></i> New Delhi, India</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Skill Setu. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+    <div class="auth-modal">
+        <button class="modal-close" onclick="closeAuth()"><i class="fas fa-times"></i></button>
+
+        <!-- Login Form -->
+        <div id="loginView">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="#6c63ff"/>
+                        <path d="M10 22L16 8L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.5 17H19.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                        <circle cx="24" cy="10" r="3" fill="#ff6584"/>
+                    </svg>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Login to your <span id="loginTypeLabel">Customer</span> account</p>
+            </div>
+            <div class="user-type-tabs">
+                <button class="utt active" id="tabCustomer" onclick="switchType('customer')"><i class="fas fa-user"></i> Customer</button>
+                <button class="utt" id="tabWorker" onclick="switchType('worker')"><i class="fas fa-hard-hat"></i> Worker</button>
+            </div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-icon"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="you@example.com" required></div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Enter password" required><button type="button" class="toggle-pw" onclick="togglePw('loginPassword')"><i class="fas fa-eye"></i></button></div>
+                </div>
+                <div class="form-row-between">
+                    <label class="checkbox-label"><input type="checkbox"> Remember me</label>
+                    <a href="#" class="link-text" onclick="showForgot()">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-auth" id="loginBtn">Login</button>
+            </form>
+            <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister()">Sign up free</a></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerView" style="display:none">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="#6c63ff"/>
+                        <path d="M10 22L16 8L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.5 17H19.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                        <circle cx="24" cy="10" r="3" fill="#ff6584"/>
+                    </svg>
+                </div>
+                <h2>Create Account</h2>
+                <p>Join as a <span id="regTypeLabel">Customer</span></p>
+            </div>
+            <div class="user-type-tabs">
+                <button class="utt active" id="regTabCustomer" onclick="switchType('customer')"><i class="fas fa-user"></i> Customer</button>
+                <button class="utt" id="regTabWorker" onclick="switchType('worker')"><i class="fas fa-hard-hat"></i> Worker</button>
+            </div>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="input-icon"><i class="fas fa-user"></i><input type="text" id="regName" placeholder="Your full name" required></div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="regEmail" placeholder="you@example.com" required>
+                        <button type="button" class="otp-send-btn" id="sendOtpBtn" onclick="sendOtp()">Send OTP</button>
+                    </div>
+                </div>
+                <div class="form-group" id="otpGroup" style="display:none">
+                    <label>Enter OTP <span class="otp-timer" id="otpTimer"></span></label>
+                    <div class="otp-inputs">
+                        <input type="text" maxlength="1" class="otp-box" oninput="otpNext(this,0)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="otpNext(this,1)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="otpNext(this,2)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="otpNext(this,3)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="otpNext(this,4)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="otpNext(this,5)">
+                    </div>
+                    <button type="button" class="btn-verify-otp" onclick="verifyOtp()">Verify OTP</button>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="input-icon"><i class="fas fa-phone"></i><input type="tel" id="regPhone" placeholder="+91 98765 43210"></div>
+                </div>
+                <div class="form-group" id="serviceTypeGroup" style="display:none">
+                    <label>Service Type</label>
+                    <div class="input-icon">
+                        <i class="fas fa-tools"></i>
+                        <select id="regService">
+                            <option value="plumber">Plumber</option>
+                            <option value="carpenter">Carpenter</option>
+                            <option value="electrician">Electrician</option>
+                            <option value="cook">Cook</option>
+                            <option value="maid">Maid</option>
+                            <option value="gardener">Gardener</option>
+                            <option value="painter">Painter</option>
+                            <option value="ac-technician">AC Technician</option>
+                            <option value="mechanic">Mechanic</option>
+                            <option value="cleaner">Cleaner</option>
+                            <option value="locksmith">Locksmith</option>
+                            <option value="mobile-repair">Mobile Repair</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon"><i class="fas fa-lock"></i><input type="password" id="regPassword" placeholder="Min 6 characters" required minlength="6"><button type="button" class="toggle-pw" onclick="togglePw('regPassword')"><i class="fas fa-eye"></i></button></div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-icon"><i class="fas fa-lock"></i><input type="password" id="regConfirm" placeholder="Repeat password" required></div>
+                </div>
+                <button type="submit" class="btn-auth" id="regBtn" disabled>Create Account</button>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+        </div>
+
+        <!-- Forgot Password -->
+        <div id="forgotView" style="display:none">
+            <div class="auth-header">
+                <div class="auth-logo">🔑</div>
+                <h2>Reset Password</h2>
+                <p>We'll send an OTP to your email</p>
+            </div>
+            <div id="forgotStep1">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-icon"><i class="fas fa-envelope"></i><input type="email" id="forgotEmail" placeholder="you@example.com"></div>
+                </div>
+                <button class="btn-auth" onclick="sendForgotOtp()">Send OTP</button>
+            </div>
+            <div id="forgotStep2" style="display:none">
+                <div class="form-group">
+                    <label>Enter OTP</label>
+                    <div class="otp-inputs">
+                        <input type="text" maxlength="1" class="otp-box forgot-otp" oninput="otpNextForgot(this,0)">
+                        <input type="text" maxlength="1" class="otp-box forgot-otp" oninput="otpNextForgot(this,1)">
+                        <input type="text" maxlength="1" class="otp-box forgot-otp" oninput="otpNextForgot(this,2)">
+                        <input type="text" maxlength="1" class="otp-box forgot-otp" oninput="otpNextForgot(this,3)">
+                        <input type="text" maxlength="1" class="otp-box forgot-otp" oninput="otpNextForgot(this,4)">
+                        <input type="text" maxlength="1" class="otp-box forgot-otp" oninput="otpNextForgot(this,5)">
+                    </div>
+                    <button class="btn-verify-otp" onclick="verifyForgotOtp()">Verify OTP</button>
+                </div>
+            </div>
+            <div id="forgotStep3" style="display:none">
+                <div class="form-group">
+                    <label>New Password</label>
+                    <div class="input-icon"><i class="fas fa-lock"></i><input type="password" id="newPassword" placeholder="New password" minlength="6"><button type="button" class="toggle-pw" onclick="togglePw('newPassword')"><i class="fas fa-eye"></i></button></div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <div class="input-icon"><i class="fas fa-lock"></i><input type="password" id="confirmNewPassword" placeholder="Confirm password"></div>
+                </div>
+                <button class="btn-auth" onclick="resetPassword()">Reset Password</button>
+            </div>
+            <p class="auth-switch"><a href="#" onclick="showLogin()"><i class="fas fa-arrow-left"></i> Back to Login</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

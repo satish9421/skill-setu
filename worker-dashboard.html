@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard – Skill Setu</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="dash-body">
+
+<nav class="dash-navbar">
+    <a href="index.html" class="dash-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="#6c63ff"/>
+            <path d="M10 22L16 8L22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5 17H19.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="24" cy="10" r="3" fill="#ff6584"/>
+        </svg>
+        Skill <span class="accent">Setu</span>
+    </a>
+    <div class="dash-nav-right">
+        <button class="availability-toggle" id="availToggle" onclick="toggleAvailability()">
+            <span class="avail-dot"></span>
+            <span id="availText">Offline</span>
+        </button>
+        <div style="position:relative">
+            <button class="notif-btn" onclick="toggleNotifPanel()" id="notifBtn">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge" id="notifCount" style="display:none">0</span>
+            </button>
+            <div class="notif-panel" id="notifPanel" style="display:none"></div>
+        </div>
+        <div class="user-menu" onclick="showSection('profile')">
+            <div class="user-avatar" id="navAvatar">?</div>
+            <span class="user-name" id="navName">Loading...</span>
+        </div>
+        <button class="btn-sm btn-sm-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</nav>
+
+<div class="dash-layout">
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <button class="sidebar-item active" onclick="showSection('home')" id="nav-home">
+                <i class="fas fa-home"></i> Dashboard
+            </button>
+            <button class="sidebar-item" onclick="showSection('requests')" id="nav-requests">
+                <i class="fas fa-inbox"></i> Job Requests
+                <span class="sidebar-badge" id="reqCount" style="display:none">0</span>
+            </button>
+            <button class="sidebar-item" onclick="showSection('active')" id="nav-active">
+                <i class="fas fa-briefcase"></i> Active Jobs
+            </button>
+            <button class="sidebar-item" onclick="showSection('history')" id="nav-history">
+                <i class="fas fa-history"></i> Job History
+            </button>
+            <button class="sidebar-item" onclick="showSection('wallet')" id="nav-wallet">
+                <i class="fas fa-wallet"></i> Wallet
+            </button>
+            <button class="sidebar-item" onclick="showSection('notifications')" id="nav-notifications">
+                <i class="fas fa-bell"></i> Notifications
+            </button>
+            <button class="sidebar-item" onclick="showSection('profile')" id="nav-profile">
+                <i class="fas fa-user"></i> Profile
+            </button>
+        </nav>
+    </aside>
+
+    <main class="dash-main">
+
+        <!-- HOME -->
+        <section class="dash-section active" id="sec-home">
+            <h2 class="section-title"><i class="fas fa-home"></i> Dashboard</h2>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#e8f0fe"><i class="fas fa-briefcase" style="color:#6c63ff"></i></div>
+                    <div class="stat-card-info"><span id="totalJobs">0</span><small>Total Jobs</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#e8f5e9"><i class="fas fa-check-circle" style="color:#27ae60"></i></div>
+                    <div class="stat-card-info"><span id="completedJobs">0</span><small>Completed</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#fff8e1"><i class="fas fa-star" style="color:#f39c12"></i></div>
+                    <div class="stat-card-info"><span id="myRating">0.0</span><small>Rating</small></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:#fce4ec"><i class="fas fa-wallet" style="color:#e91e63"></i></div>
+                    <div class="stat-card-info"><span id="walletStat">₹0</span><small>Wallet Balance</small></div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+                <div class="card">
+                    <div class="card-header"><h3>Recent Requests</h3><button class="btn-sm btn-sm-outline" onclick="showSection('requests')">View All</button></div>
+                    <div id="recentRequests"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Performance</h3></div>
+                    <div style="display:flex;flex-direction:column;gap:1rem">
+                        <div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.85rem"><span>Rating</span><strong id="perfRating">0.0 ⭐</strong></div>
+                            <div style="background:var(--border);border-radius:50px;height:8px"><div id="ratingBar" style="background:var(--warning);height:8px;border-radius:50px;width:0%;transition:.5s"></div></div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.85rem"><span>Completion Rate</span><strong id="perfCompletion">0%</strong></div>
+                            <div style="background:var(--border);border-radius:50px;height:8px"><div id="completionBar" style="background:var(--success);height:8px;border-radius:50px;width:0%;transition:.5s"></div></div>
+                        </div>
+                        <div style="font-size:.85rem;color:var(--text-light)">Total Reviews: <strong id="perfReviews">0</strong></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOB REQUESTS -->
+        <section class="dash-section" id="sec-requests">
+            <h2 class="section-title"><i class="fas fa-inbox"></i> Job Requests</h2>
+            <div id="requestsList"></div>
+        </section>
+
+        <!-- ACTIVE JOBS -->
+        <section class="dash-section" id="sec-active">
+            <h2 class="section-title"><i class="fas fa-briefcase"></i> Active Jobs</h2>
+            <div id="activeJobsList"></div>
+        </section>
+
+        <!-- JOB HISTORY -->
+        <section class="dash-section" id="sec-history">
+            <h2 class="section-title"><i class="fas fa-history"></i> Job History</h2>
+            <div id="historyList"></div>
+        </section>
+
+        <!-- WALLET -->
+        <section class="dash-section" id="sec-wallet">
+            <h2 class="section-title"><i class="fas fa-wallet"></i> My Wallet</h2>
+            <div class="wallet-hero">
+                <div class="wallet-balance-label">Available Balance</div>
+                <div class="wallet-balance-amount">₹<span id="walletAmount">0.00</span></div>
+                <div class="wallet-actions-row">
+                    <button class="wallet-action-btn" onclick="openWithdraw()"><i class="fas fa-arrow-up"></i> Withdraw</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>Transaction History</h3></div>
+                <div id="transactionList"></div>
+            </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="dash-section" id="sec-notifications">
+            <h2 class="section-title"><i class="fas fa-bell"></i> Notifications</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Notifications</h3>
+                    <button class="btn-sm btn-sm-outline" onclick="markAllRead()">Mark all read</button>
+                </div>
+                <div id="notifList"></div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="dash-section" id="sec-profile">
+            <h2 class="section-title"><i class="fas fa-user"></i> My Profile</h2>
+            <div class="card">
+                <div class="profile-header">
+                    <div class="profile-avatar-wrap">
+                        <div class="profile-avatar" id="profileAvatar">?</div>
+                        <label class="avatar-edit-btn" for="avatarInput"><i class="fas fa-camera"></i></label>
+                        <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+                    </div>
+                    <div>
+                        <div class="profile-name" id="profileNameDisplay">Loading...</div>
+                        <div class="profile-email" id="profileEmailDisplay"></div>
+                        <div style="margin-top:.5rem;display:flex;gap:.5rem;align-items:center">
+                            <span class="status-pill completed">Verified Worker</span>
+                            <span style="font-size:.85rem;color:var(--warning)">⭐ <span id="profileRatingDisplay">0.0</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group-dash">
+                        <label>Full Name</label>
+                        <input type="text" id="pName" placeholder="Your full name">
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Phone Number</label>
+                        <input type="tel" id="pPhone" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Service Type</label>
+                        <select id="pService">
+                            <option value="plumber">Plumber</option>
+                            <option value="carpenter">Carpenter</option>
+                            <option value="electrician">Electrician</option>
+                            <option value="cook">Cook</option>
+                            <option value="maid">Maid</option>
+                            <option value="gardener">Gardener</option>
+                            <option value="painter">Painter</option>
+                            <option value="ac-technician">AC Technician</option>
+                            <option value="mechanic">Mechanic</option>
+                            <option value="cleaner">Cleaner</option>
+                            <option value="locksmith">Locksmith</option>
+                            <option value="mobile-repair">Mobile Repair</option>
+                        </select>
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Experience (years)</label>
+                        <input type="number" id="pExperience" min="0" placeholder="Years of experience">
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Hourly Rate (₹)</label>
+                        <input type="number" id="pRate" min="0" placeholder="Rate per hour">
+                    </div>
+                    <div class="form-group-dash" style="grid-column:1/-1">
+                        <label>Bio / About You</label>
+                        <textarea id="pBio" placeholder="Tell customers about your skills and experience..."></textarea>
+                    </div>
+                </div>
+                <div style="margin-top:1.5rem">
+                    <button class="btn-save" onclick="updateProfile()"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+            <div class="card" style="margin-top:1.5rem">
+                <div class="card-header"><h3>Change Password</h3></div>
+                <div class="form-grid">
+                    <div class="form-group-dash">
+                        <label>New Password</label>
+                        <input type="password" id="newPw" placeholder="New password">
+                    </div>
+                    <div class="form-group-dash">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPw" placeholder="Confirm password">
+                    </div>
+                </div>
+                <div style="margin-top:1rem">
+                    <button class="btn-save" onclick="changePassword()">Update Password</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div class="generic-modal" id="withdrawModal">
+    <div class="gm-content">
+        <button class="gm-close" onclick="closeModal('withdrawModal')"><i class="fas fa-times"></i></button>
+        <div class="gm-title">Withdraw Money</div>
+        <div class="form-group-dash" style="margin-bottom:1.5rem">
+            <label>Amount (₹)</label>
+            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1">
+        </div>
+        <button class="btn-save" style="width:100%" onclick="withdrawMoney()">Withdraw</button>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="config.js"></script>
+<script src="worker.js"></script>
+</body>
+</html>
