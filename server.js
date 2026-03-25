@@ -30,6 +30,7 @@ const ALLOWED_ORIGINS = [
     'http://localhost:5500',
     'http://127.0.0.1:3000',
     'https://skill-setu.netlify.app',
+    'https://skill-setu-nine.vercel.app',
     process.env.FRONTEND_URL,
 ].filter(Boolean);
 

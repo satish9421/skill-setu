@@ -25,7 +25,7 @@ services:
       - key: EMAIL_PASS
         sync: false
       - key: FRONTEND_URL
-        value: https://skill-setu.netlify.app
+        value: https://skill-setu-nine.vercel.app
       - key: TWILIO_ACCOUNT_SID
         value: AC340005e8778637f3871b65063cee4022
       - key: TWILIO_AUTH_TOKEN
