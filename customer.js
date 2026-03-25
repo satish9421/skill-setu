@@ -339,7 +339,7 @@ async function loadWallet() {
     const txns = (currentUser.transactions || []).slice().reverse();
     const container = document.getElementById('transactionList');
     if (!txns.length) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><h3>No transactions yet</h3></div>`;
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><h3>No transactions yet</h3><p>Add money to get started</p></div>`;
         return;
     }
     container.innerHTML = txns.map(t => `
@@ -353,27 +353,52 @@ async function loadWallet() {
         </div>`).join('');
 }
 
-function openAddMoney() { openModal('addMoneyModal'); }
 function setAmount(val) { document.getElementById('addMoneyAmount').value = val; }
+
+function openAddMoney() {
+    document.getElementById('addMoneyAmount').value = '';
+    openModal('addMoneyModal');
+}
 
 async function addMoney() {
     const amount = parseFloat(document.getElementById('addMoneyAmount').value);
     if (!amount || amount <= 0) { showToast('Enter a valid amount', 'error'); return; }
+    if (amount > 1000) { showToast('Cannot add more than ₹1000 at a time', 'error'); return; }
+    const btn = document.querySelector('#addMoneyModal .btn-save');
+    btn.textContent = 'Adding...'; btn.disabled = true;
     try {
         const res = await fetch(`${API}/wallet/add`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
             body: JSON.stringify({ userId: currentUser._id, amount })
         });
+        const data = await res.json();
         if (res.ok) {
-            showToast(`₹${amount} added to wallet!`, 'success');
+            currentUser.wallet = data.wallet;
+            currentUser.transactions = data.transactions;
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
             closeModal('addMoneyModal');
-            await refreshUser();
-            renderNav();
+            showToast(`₹${amount} added to wallet!`, 'success');
+            renderNav(); loadWallet(); loadDashboard();
+        } else { showToast(data.error || 'Failed to add money', 'error'); }
+    } catch (e) { showToast('Error adding money', 'error'); }
+    finally { btn.textContent = 'Add Money'; btn.disabled = false; }
+}
+
+async function clearTransactions() {
+    if (!confirm('Clear all transaction history? This cannot be undone.')) return;
+    try {
+        const res = await fetch(`${API}/wallet/${currentUser._id}/transactions`, {
+            method: 'DELETE', credentials: 'include'
+        });
+        if (res.ok) {
+            currentUser.transactions = [];
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showToast('Transaction history cleared', 'success');
             loadWallet();
-            loadDashboard();
-        } else { showToast('Failed to add money', 'error'); }
+        }
     } catch (e) { showToast('Error', 'error'); }
 }
+
 
 async function loadNotifications(markRead = false) {
     try {

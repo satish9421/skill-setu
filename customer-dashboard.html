@@ -164,7 +164,10 @@
                 </div>
             </div>
             <div class="card">
-                <div class="card-header"><h3>Transaction History</h3></div>
+                <div class="card-header">
+                    <h3>Transaction History</h3>
+                    <button class="btn-sm btn-sm-outline" onclick="clearTransactions()" style="color:var(--danger);border-color:var(--danger)">Clear History</button>
+                </div>
                 <div id="transactionList"></div>
             </div>
         </section>
@@ -241,6 +244,7 @@
     <div class="gm-content">
         <button class="gm-close" onclick="closeModal('addMoneyModal')"><i class="fas fa-times"></i></button>
         <div class="gm-title">Add Money to Wallet</div>
+        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:1rem">Maximum ₹1000 per transaction</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem">
             <button class="btn-sm btn-sm-outline" onclick="setAmount(100)">₹100</button>
             <button class="btn-sm btn-sm-outline" onclick="setAmount(200)">₹200</button>

@@ -561,14 +561,33 @@ app.put('/api/notifications/:userId/read-all', async (req, res) => {
 
 // ─── WALLET ROUTES ───────────────────────────────────────────────────────────
 
+app.delete('/api/wallet/:userId/transactions', async (req, res) => {
+    try {
+        await usersCol.updateOne({ _id: new ObjectId(req.params.userId) }, { $set: { transactions: [] } });
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.post('/api/wallet/add', async (req, res) => {
     try {
         const { userId, amount } = req.body;
-        await usersCol.updateOne({ _id: new ObjectId(userId) }, {
-            $inc: { wallet: amount },
-            $push: { transactions: { type: 'credit', amount, description: 'Added to wallet', date: new Date() } }
-        });
-        res.json({ success: true });
+        const parsed = parseFloat(amount);
+
+        if (!parsed || parsed <= 0) return res.status(400).json({ error: 'Invalid amount' });
+        if (parsed > 1000) return res.status(400).json({ error: 'Cannot add more than ₹1000 at a time' });
+
+        const result = await usersCol.findOneAndUpdate(
+            { _id: new ObjectId(userId) },
+            {
+                $inc: { wallet: parsed },
+                $push: { transactions: { type: 'credit', amount: parsed, description: `Added ₹${parsed} to wallet`, date: new Date() } }
+            },
+            { returnDocument: 'after', projection: { password: 0 } }
+        );
+
+        res.json({ success: true, wallet: result.wallet, transactions: result.transactions });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
