@@ -18,6 +18,8 @@ services:
         sync: false
       - key: RESEND_FROM
         value: Skill Setu <onboarding@resend.dev>
+      - key: BREVO_API_KEY
+        sync: false
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASS

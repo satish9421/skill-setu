@@ -73,7 +73,25 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendEmail(to, subject, html) {
-    // Try Gmail first — sends to any email address
+    // Try Brevo first — sends to any email, 300/day free, no domain needed
+    if (process.env.BREVO_API_KEY) {
+        try {
+            const brevoClient = require('@getbrevo/brevo');
+            const apiInstance = new brevoClient.TransactionalEmailsApi();
+            apiInstance.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+            await apiInstance.sendTransacEmail({
+                sender: { name: 'Skill Setu', email: process.env.EMAIL_USER || 'sattuu.911@gmail.com' },
+                to: [{ email: to }],
+                subject,
+                htmlContent: html
+            });
+            console.log(`[EMAIL] Sent via Brevo to ${to}`);
+            return true;
+        } catch (e) {
+            console.error('Brevo error:', e.message);
+        }
+    }
+    // Fallback: Gmail SMTP
     if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your-email@gmail.com' && process.env.EMAIL_PASS) {
         try {
             await transporter.sendMail({ from: process.env.EMAIL_FROM || `Skill Setu <${process.env.EMAIL_USER}>`, to, subject, html });
@@ -81,21 +99,6 @@ async function sendEmail(to, subject, html) {
             return true;
         } catch (e) {
             console.error('Gmail error:', e.message);
-        }
-    }
-    // Fallback to Resend (only works for verified domain or account owner email)
-    if (resend) {
-        try {
-            await resend.emails.send({
-                from: process.env.RESEND_FROM || 'Skill Setu <onboarding@resend.dev>',
-                to,
-                subject,
-                html
-            });
-            console.log(`[EMAIL] Sent via Resend to ${to}`);
-            return true;
-        } catch (e) {
-            console.error('Resend error:', e.message);
         }
     }
     console.log(`[EMAIL MOCK] To: ${to} | Subject: ${subject}`);
