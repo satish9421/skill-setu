@@ -626,26 +626,6 @@ app.post('/api/wallet/withdraw', async (req, res) => {
     }
 });
 
-// ─── DEBUG ───────────────────────────────────────────────────────────────────
-app.get('/api/debug/email-config', (req, res) => {
-    res.json({
-        brevo: !!process.env.BREVO_API_KEY,
-        gmail: !!(process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_USER !== 'your-email@gmail.com'),
-        resend: !!process.env.RESEND_API_KEY,
-        emailUser: process.env.EMAIL_USER ? process.env.EMAIL_USER.substring(0, 5) + '***' : 'not set'
-    });
-});
-
-app.post('/api/debug/test-email', async (req, res) => {
-    const { to } = req.body;
-    try {
-        const result = await sendEmail(to, 'Skill Setu OTP Test', '<h2>Test OTP: <b style="color:#6c63ff">123456</b></h2><p>This is a test from Render server.</p>');
-        res.json({ sent: result });
-    } catch(e) {
-        res.json({ error: e.message });
-    }
-});
-
 // ─── STATS ───────────────────────────────────────────────────────────────────
 
 app.get('/api/stats/platform', async (req, res) => {
