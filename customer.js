@@ -258,18 +258,23 @@ function renderBookings(bookings) {
     container.innerHTML = bookings.map(b => {
         let actions = '';
         let locationHtml = '';
+
         if (b.status === 'accepted' || b.status === 'in-progress') {
             locationHtml = `<div class="location-live"><i class="fas fa-map-marker-alt"></i> Worker location updating live · ${b.workerLocation ? `${b.workerLocation.lat.toFixed(4)}, ${b.workerLocation.lng.toFixed(4)}` : 'Fetching...'}</div>`;
         }
         if (b.status === 'in-progress') {
-            actions += `<button class="btn-sm btn-sm-success" onclick="completeBooking('${b._id}')"><i class="fas fa-check"></i> Mark Complete</button>`;
+            actions += `<button class="btn-sm btn-sm-success" onclick="completeBooking('${b._id}')"><i class="fas fa-check"></i> Mark Complete & Pay</button>`;
         }
-        if (b.status === 'completed' && !b.rated) {
+        if (b.status === 'completed' && !b.paid) {
+            actions += `<button class="btn-sm btn-sm-success" onclick="completeBooking('${b._id}')"><i class="fas fa-rupee-sign"></i> Confirm & Pay</button>`;
+        }
+        if (b.status === 'completed' && b.paid && !b.rated) {
             actions += `<button class="btn-sm btn-sm-primary" onclick="openRateModal('${b._id}')"><i class="fas fa-star"></i> Rate Worker</button>`;
         }
         if (b.status === 'pending') {
             actions += `<span style="font-size:.82rem;color:var(--text-light)"><i class="fas fa-clock"></i> Waiting for worker to accept...</span>`;
         }
+
         return `<div class="booking-card ${b.status}">
             <div class="bc-header">
                 <div>
@@ -288,6 +293,7 @@ function renderBookings(bookings) {
         </div>`;
     }).join('');
 }
+
 
 async function completeBooking(bookingId) {
     if (!confirm('Confirm job is complete? Payment will be processed.')) return;
