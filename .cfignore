@@ -1,8 +1,0 @@
-node_modules
-.env
-public/uploads
-*.log
-*.bat
-server.js
-migrate.js
-fix_wallet.js
