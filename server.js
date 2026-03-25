@@ -636,9 +636,14 @@ app.get('/api/debug/email-config', (req, res) => {
     });
 });
 
-app.get('/api/debug/test-email/:to', async (req, res) => {
-    const result = await sendEmail(req.params.to, 'Skill Setu OTP Test', '<h2>Test OTP: <b style="color:#6c63ff">123456</b></h2>');
-    res.json({ sent: result });
+app.post('/api/debug/test-email', async (req, res) => {
+    const { to } = req.body;
+    try {
+        const result = await sendEmail(to, 'Skill Setu OTP Test', '<h2>Test OTP: <b style="color:#6c63ff">123456</b></h2><p>This is a test from Render server.</p>');
+        res.json({ sent: result });
+    } catch(e) {
+        res.json({ error: e.message });
+    }
 });
 
 // ─── STATS ───────────────────────────────────────────────────────────────────
