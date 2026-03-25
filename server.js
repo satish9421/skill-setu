@@ -636,6 +636,11 @@ app.get('/api/debug/email-config', (req, res) => {
     });
 });
 
+app.get('/api/debug/test-email/:to', async (req, res) => {
+    const result = await sendEmail(req.params.to, 'Skill Setu OTP Test', '<h2>Test OTP: <b style="color:#6c63ff">123456</b></h2>');
+    res.json({ sent: result });
+});
+
 // ─── STATS ───────────────────────────────────────────────────────────────────
 
 app.get('/api/stats/platform', async (req, res) => {
