@@ -73,19 +73,32 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendEmail(to, subject, html) {
-    // Try Brevo first — sends to any email, 300/day free, no domain needed
+    // Brevo via REST API — works from any server, sends to any email
     if (process.env.BREVO_API_KEY) {
         try {
-            const brevoClient = require('@getbrevo/brevo');
-            const apiInstance = new brevoClient.TransactionalEmailsApi();
-            apiInstance.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
-            await apiInstance.sendTransacEmail({
+            const https = require('https');
+            const data = JSON.stringify({
                 sender: { name: 'Skill Setu', email: process.env.EMAIL_USER || 'sattuu.911@gmail.com' },
                 to: [{ email: to }],
                 subject,
                 htmlContent: html
             });
-            console.log(`[EMAIL] Sent via Brevo to ${to}`);
+            await new Promise((resolve, reject) => {
+                const req = https.request({
+                    hostname: 'api.brevo.com', path: '/v3/smtp/email', method: 'POST',
+                    headers: { 'api-key': process.env.BREVO_API_KEY, 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
+                }, res => {
+                    let body = '';
+                    res.on('data', d => body += d);
+                    res.on('end', () => {
+                        if (res.statusCode === 201) { console.log(`[EMAIL] Sent via Brevo to ${to}`); resolve(); }
+                        else reject(new Error(`Brevo ${res.statusCode}: ${body}`));
+                    });
+                });
+                req.on('error', reject);
+                req.write(data);
+                req.end();
+            });
             return true;
         } catch (e) {
             console.error('Brevo error:', e.message);
