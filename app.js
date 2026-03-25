@@ -10,12 +10,15 @@ window.addEventListener('scroll', () => {
     document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
 });
 
-// Load platform stats
+// Load platform stats + wake up Render server
 fetch(`${API}/stats/platform`).then(r => r.json()).then(data => {
     if (data.totalWorkers) document.getElementById('statWorkers').textContent = data.totalWorkers + '+';
     if (data.totalCustomers) document.getElementById('statCustomers').textContent = (data.totalCustomers || 0) + '+';
     if (data.completedBookings) document.getElementById('statJobs').textContent = (data.completedBookings || 0) + '+';
-}).catch(() => {});
+}).catch(() => {
+    // Server might be sleeping — ping again after 5s to wake it up
+    setTimeout(() => fetch(`${API}/stats/platform`).catch(() => {}), 5000);
+});
 
 function toggleMenu() {
     document.getElementById('navLinks').classList.toggle('open');
@@ -220,7 +223,8 @@ async function handleLogin(e) {
 
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000);
+        // 60s timeout — Render free tier can take up to 50s to wake up
+        const timeout = setTimeout(() => controller.abort(), 60000);
 
         const res = await fetch(`${API}/auth/login`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -248,7 +252,11 @@ async function handleLogin(e) {
             btn.textContent = 'Login';
         }
     } catch (e) {
-        showToast(e.name === 'AbortError' ? 'Request timed out. Try again.' : 'Login failed. Check connection.', 'error');
+        if (e.name === 'AbortError') {
+            showToast('Server is waking up, please try again in a moment.', 'error');
+        } else {
+            showToast('Login failed. Check your connection.', 'error');
+        }
         btn.disabled = false;
         btn.textContent = 'Login';
     }

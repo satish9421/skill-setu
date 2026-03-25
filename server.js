@@ -647,6 +647,9 @@ app.post('/api/wallet/withdraw', async (req, res) => {
 
 // ─── STATS ───────────────────────────────────────────────────────────────────
 
+// Keep-alive ping endpoint
+app.get('/api/ping', (req, res) => res.json({ status: 'ok', time: new Date() }));
+
 app.get('/api/stats/platform', async (req, res) => {
     try {
         const [totalWorkers, totalCustomers, totalBookings, completedBookings] = await Promise.all([
