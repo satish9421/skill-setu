@@ -613,6 +613,16 @@ app.post('/api/wallet/withdraw', async (req, res) => {
     }
 });
 
+// ─── DEBUG ───────────────────────────────────────────────────────────────────
+app.get('/api/debug/email-config', (req, res) => {
+    res.json({
+        brevo: !!process.env.BREVO_API_KEY,
+        gmail: !!(process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_USER !== 'your-email@gmail.com'),
+        resend: !!process.env.RESEND_API_KEY,
+        emailUser: process.env.EMAIL_USER ? process.env.EMAIL_USER.substring(0, 5) + '***' : 'not set'
+    });
+});
+
 // ─── STATS ───────────────────────────────────────────────────────────────────
 
 app.get('/api/stats/platform', async (req, res) => {
