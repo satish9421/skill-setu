@@ -508,22 +508,40 @@ app.put('/api/bookings/:id/complete', async (req, res) => {
     try {
         const booking = await bookingsCol.findOne({ _id: new ObjectId(req.params.id) });
         if (!booking) return res.status(404).json({ error: 'Booking not found' });
+        if (booking.paid) return res.status(400).json({ error: 'Already paid' });
+        if (!['in-progress', 'completed'].includes(booking.status)) {
+            return res.status(400).json({ error: 'Booking is not in progress or completed' });
+        }
 
-        await bookingsCol.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { status: 'completed', completedAt: new Date() } });
+        // Check customer has enough balance
+        const customer = await usersCol.findOne({ _id: new ObjectId(booking.customerId) });
+        if ((customer.wallet || 0) < booking.amount) {
+            return res.status(400).json({ error: 'Insufficient wallet balance' });
+        }
+
+        await bookingsCol.updateOne({ _id: new ObjectId(req.params.id) }, {
+            $set: { status: 'completed', completedAt: new Date(), paid: true }
+        });
 
         await usersCol.updateOne({ _id: new ObjectId(booking.customerId) }, {
             $inc: { wallet: -booking.amount },
-            $push: { transactions: { type: 'debit', amount: booking.amount, description: `Payment for ${booking.serviceType}`, date: new Date() } }
+            $push: { transactions: { type: 'debit', amount: booking.amount, description: `Payment for ${booking.serviceType} - ${booking.workerName}`, date: new Date() } }
         });
 
         await workersCol.updateOne({ _id: new ObjectId(booking.workerId) }, {
             $inc: { wallet: booking.amount, completedJobs: 1 },
-            $push: { transactions: { type: 'credit', amount: booking.amount, description: `Earned from ${booking.serviceType} job`, date: new Date() } }
+            $push: { transactions: { type: 'credit', amount: booking.amount, description: `Earned from ${booking.serviceType} job - ${booking.customerName}`, date: new Date() } }
         });
 
         await notificationsCol.insertOne({
             userId: booking.workerId, userType: 'worker',
-            title: 'Payment Received', message: `₹${booking.amount} credited to your wallet`,
+            title: 'Payment Received', message: `₹${booking.amount} credited to your wallet for ${booking.serviceType} job`,
+            type: 'payment', read: false, createdAt: new Date()
+        });
+
+        await notificationsCol.insertOne({
+            userId: booking.customerId, userType: 'customer',
+            title: 'Payment Done', message: `₹${booking.amount} paid to ${booking.workerName} for ${booking.serviceType}`,
             type: 'payment', read: false, createdAt: new Date()
         });
 
