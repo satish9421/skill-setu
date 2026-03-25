@@ -28,8 +28,12 @@ async function refreshUser() {
             currentUser = data.user;
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
-    } catch (e) {}
+        // Don't redirect on 401 — cross-origin cookies don't work between Vercel and Render
+    } catch (e) {
+        console.warn('Session refresh failed, using cached data');
+    }
 }
+
 
 function renderNav() {
     document.getElementById('navName').textContent = currentUser.name;

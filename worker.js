@@ -25,13 +25,10 @@ async function refreshWorker() {
             const data = await res.json();
             currentWorker = data.user;
             sessionStorage.setItem('currentUser', JSON.stringify(currentWorker));
-        } else if (res.status === 401) {
-            // Session expired — redirect to login
-            sessionStorage.clear();
-            window.location.href = 'index.html';
         }
+        // If 401 or error — keep using sessionStorage data, don't redirect
+        // Cross-origin cookies don't work between Vercel and Render
     } catch (e) {
-        // Network error — keep using sessionStorage data, don't redirect
         console.warn('Session refresh failed, using cached data');
     }
 }
