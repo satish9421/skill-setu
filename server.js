@@ -50,7 +50,11 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'skillsetu-secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 }
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    }
 }));
 
 // Email via Resend (primary) with nodemailer Gmail fallback
@@ -235,10 +239,11 @@ app.post('/api/auth/register', async (req, res) => {
 
         await col.insertOne(base);
 
+        const siteUrl = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
         const welcomeHtml = `<div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:30px;background:#f9f9f9;border-radius:10px;">
             <h2 style="color:#6c63ff;">Welcome to Skill Setu, ${name}!</h2>
             <p>Your account has been created successfully. You can now ${userType === 'customer' ? 'find skilled workers near you' : 'start accepting jobs'}.</p>
-            <a href="http://localhost:${PORT}" style="display:inline-block;padding:12px 24px;background:#6c63ff;color:#fff;border-radius:6px;text-decoration:none;margin-top:15px;">Go to Dashboard</a>
+            <a href="${siteUrl}" style="display:inline-block;padding:12px 24px;background:#6c63ff;color:#fff;border-radius:6px;text-decoration:none;margin-top:15px;">Go to Dashboard</a>
         </div>`;
         await sendEmail(email, 'Welcome to Skill Setu!', welcomeHtml);
 
